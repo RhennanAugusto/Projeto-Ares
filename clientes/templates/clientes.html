@@ -1,0 +1,126 @@
+{% extends "ares.html" %}
+{% load static %}
+
+{% block 'head' %}
+  <link rel="stylesheet" href="{% static 'clientes/css/clientes.css' %}">
+{% endblock %}
+
+{% block 'dashboard' %}
+   <div class = "container">
+        <div class = "row">
+            <div onclick = "exibir_form('1')" class = "col-md card-dashboard">
+                <p class="text-card">Adicionar Clientes</p>
+            </div>
+
+            <div onclick = "exibir_form('2')" class = "col-md card-dashboard">
+                <p class="text-card">Atualizar Clientes</p>
+            </div>
+
+        </div>
+            <div id="adicionar-cliente" class="adicionar-cliente">
+                    <form action="{% url 'clientes' %}" method="POST">{% csrf_token %}
+                        <div class="row">
+                            <div class="col-md">
+                                <p>Nome:</p>
+                                <input type="text" class="form-control" placeholder="Primeiro nome" name="nome" value="{{nome}}">
+                            </div>
+                            <div class="col-md">
+                                <p>Sobrenome:</p>
+                                <input type="text" class="form-control" placeholder="Sobrenome" name="sobrenome" value="{{sobrenome}}">
+                            </div>
+                        </div>
+                        <br>
+                         
+                        <p>E-mail:</p>
+                        {% if email_error %}
+                            <p class="error">O e-mail inserido é inválido.</p>
+                        {% endif %}
+                        <input type="email" class="form-control" placeholder="nome@email.com" name="email" value="{{email}}">
+                        <br>
+                        
+                        <p>CPF:</p>
+                        {% if cpf_error %}
+                            <p class="error">O CPF inserido já está em uso.</p>
+                        {% endif %}
+                        <input type="text" class="form-control" placeholder="___.___.___-__" name="cpf" value="{{cpf}}">
+                        <hr style="background-color:gray;">
+                        <div class="add-ares">
+                            <h3>Multi-Ar</h3>
+                            <span class="btn-add-air" onclick="add_ares()">+ Adicionar um serviço</span>
+            
+                            <div id="form-ares">
+                                {% for ar, marca, ano in ares %}
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md">
+                                            <input type = 'text' placeholder='Ar' class='form-control' name='ar' value ="{{ar}}">
+                                        </div>
+                                        
+                                        <div class="col-md">
+                                            <input type='text' placeholder='Marca' class='form-control' name='marca' value="{{marca}}">
+                                        </div>
+
+                                        <div class="col-md">
+                                            <input type='number' placeholder='Ano de instalação' class='form-control' name='ano' value="{{ano}}">
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+            
+                            </div>
+            
+                        </div>
+            
+                        <br>
+                        <input type="submit" value="Cadastrar" class="btn-principal">
+            
+                    </form>
+            
+            </div>
+
+            <div id ="att_clientes">
+                <p></p>
+                <select id="cliente-select" onchange = "dados_cliente()" class ="form-control">
+                    <option value=""></option>
+                    {% for cliente in clientes %}
+                     <option value="{{cliente.id}}">{{cliente.nome}}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <hr>
+
+                <div id="form-att-cliente">
+                    <input type="hidden" id="id" value="{{ cliente.id }}">
+                    <p>Nome:</p>
+                    <input id="nome" type="text" class="form-control">
+                    <p>Sobrenome:</p>
+                    <input id="sobrenome" type="text" class="form-control">
+                    <p>E-mail:</p>
+                    <input id="email" type="text" class="form-control">
+                    <p>CPF:</p>
+                    <input id="cpf" type="text" class="form-control">
+                    <br>
+                    <input onclick="update_cliente()" type="submit" value="Salvar Alterações do Cliente" class="btn btn-success">
+                    <hr>
+                    <h3>Equipamentos Cadastrados</h3>
+                    <div id="ares">
+
+                    </div>
+
+                </div>
+            </div>
+            {% if messages %}
+                {% for message in messages %}
+                    <script>
+                        window.onload = function() {
+                            alert("{{ message }}");
+                        }
+                    </script>
+                {% endfor %}
+            {% endif %}
+
+   </div>
+   <script src="{% static 'clientes/js/clientes.js' %}"></script>
+   
+{% endblock %}
